@@ -20,22 +20,23 @@ public class WizardRepository {
 
     public List<Wizard> findAll() {
 
-        Connection connection = null;
+        // Achtung!!! Hier nicht threadsafe, wenn Connection nicht im try/catch-Block!
+    	Connection connection = null;
         PreparedStatement statement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet = null; // ResultSet ist ein Stream, damit der Speicher nicht überläuft
         try {
             connection = DriverManager.getConnection(
                     DB_URL, DB_USER, DB_PASSWORD
             );
             statement = connection.prepareStatement(
-                    "SELECT * FROM wizard;"
+                    "SELECT * FROM wizard;" // besser wäre es, die Felder explizit zu selektieren
             );
             resultSet = statement.executeQuery();
 
             List<Wizard> wizards = new ArrayList<>();
 
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
+                Long id = resultSet.getLong("id");  // gebräuchlicher ist das Mapping mittels IDs der Spalten (siehe Live-Coding)
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 Date birthday = resultSet.getDate("birthday");
@@ -109,11 +110,15 @@ public class WizardRepository {
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("first_name");
+                //neu (fehlte im Quest-Quellcode):
+                String lastName_db = resultSet.getString("last_name");
+                
                 Date birthday = resultSet.getDate("birthday");
                 String birthPlace = resultSet.getString("birth_place");
                 String biography = resultSet.getString("biography");
                 boolean muggle = resultSet.getBoolean("is_muggle");
-                wizards.add(new Wizard(id, firstName, lastName, birthday, birthPlace, biography, muggle));
+                //wizards.add(new Wizard(id, firstName, lastName, birthday, birthPlace, biography, muggle));
+                wizards.add(new Wizard(id, firstName, lastName_db, birthday, birthPlace, biography, muggle));
             }
             return wizards;
         } catch (SQLException e) {
