@@ -17,10 +17,14 @@ public class WizardRepository {
     private final static String DB_URL = "jdbc:mysql://localhost:3306/spring_jdbc_quest?serverTimezone=GMT";
     private final static String DB_USER = "h4rryp0tt3r";
     private final static String DB_PASSWORD = "Horcrux4life!";
+    
+    // Achtung!!! Dies wäre nicht threadsafe, wenn Connection nicht in der Methode definiert
+	// Connection connection = null;
+    // PreparedStatement statement = null;
+    // ResultSet resultSet = null; 
 
     public List<Wizard> findAll() {
 
-        // Achtung!!! Hier nicht threadsafe, wenn Connection nicht im try/catch-Block!
     	Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null; // ResultSet ist ein Stream, damit der Speicher nicht überläuft
